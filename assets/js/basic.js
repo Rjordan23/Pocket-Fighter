@@ -142,16 +142,21 @@ var calcInitHealth =  function(user) {
   return ((0.20 * Math.sqrt(user[0].level)) * user[0].defense) * user[0].hp;
 }
 
-var attackMove = function(attack, level, stack, critical, enemy) {
-  console.log('enemy.health before ' + enemy.health);
+var attackMove = function(attack, level, stack, critical, enemy, attacker) {
+  console.log(enemy.name + ' Before: ' + enemy.health);
 
   var attackAmount = ((attack * level) * (stack + critical));
   enemy.health = enemy.health - attackAmount;
-  
-  console.log('enemy.health after ' + enemy.health);
+  checkWinner(enemy, attacker)
+  console.log(enemy.name + ' After: ' + enemy.health);
   
 }
 
+var checkWinner = function(enemy, attacker) {
+  if(enemy.health <= 0) {
+    console.log('The winner is ' + attacker.name);
+  }
+}
 
 
 var play = function(userAttack, cpuAttack) {
@@ -162,26 +167,99 @@ var play = function(userAttack, cpuAttack) {
   switch(userAttack) {
     case 'rock':
       if(cpuAttack == 'paper') {
-        attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival);
-        console.log('Paper beats rock');
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+            // CPU
+            attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+          }
+        }
       }
       if(cpuAttack == 'scissors') {
-        console.log('Rock beats paper');
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+          }
+        }
       }
       if(cpuAttack == 'rock') {
-        console.log('Its a draw');
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, 0, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, 0, currentChar, currentRival);
+          }
+        }
       }
-
-      console.log(userAttack);
-      
       break;
     case 'paper':
-      console.log(userAttack);
-
+      if(cpuAttack == 'paper') {
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, 1, currentRival, currentChar);
+          // CPU
+          if(currentRival.health >= 1) {
+          attackMove(currentRival.attack, currentRival.level, .8, 1, currentChar, currentRival);
+          }
+        }
+      }
+      if(cpuAttack == 'scissors') {
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+          }
+        }
+      }
+      if(cpuAttack == 'rock') {
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+          }
+        }
+      }
       break;
     case 'scissors':
-      console.log(userAttack);
-
+      if(cpuAttack == 'paper') {
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+          }
+        }
+      }
+      if(cpuAttack == 'scissors') {
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, 1, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, 1, currentChar, currentRival);
+          }
+        }
+      }
+      if(cpuAttack == 'rock') {
+        if(currentChar.health >= 1 && currentRival.health >=1) {
+          // User
+          attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
+          if(currentRival.health >= 1) {
+          // CPU
+          attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+          }
+        }
+      }
       break;
   }
 }
