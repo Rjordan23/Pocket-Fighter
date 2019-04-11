@@ -1,335 +1,281 @@
-// Fighter Database
-var fighterDB = [
-  {
-    name: 'thorl',
-    type: 'tank',
-    hp: 60,
-    attack: 52,
-    defense: 43,
-    level: 1,
-    img: 'https://cdnb.artstation.com/p/assets/images/images/004/176/729/original/martin-king-hots-thrall-large.gif?1481063416'
-  },
-  {
-    name: 'talara',
-    type: 'warrior',
-    hp: 45,
-    attack: 48,
-    defense: 49,
-    level: 1,
-    img: 'https://66.media.tumblr.com/3e8f5c83b0644b96e252be8fa5774470/tumblr_od9xizb2bh1qkpz2go1_500.gif'
-  },
-  {
-    name: 'narrii',
-    type: 'archer',
-    hp: 39,
-    attack: 59,
-    defense: 29,
-    level: 1,
-    img: 'https://66.media.tumblr.com/af9c2a796605a377f95baf6b40b115c2/tumblr_o5tx2xwU2J1qkpz2go1_400.gif'
-  },
-  {
-    name: 'vorath',
-    type: 'mage',
-    hp: 40,
-    attack: 45,
-    defense: 34,
-    level: 1,
-    img: 'https://steamuserimages-a.akamaihd.net/ugc/839210690287963320/D1BF1ED29E90DC533B64E8D5602193A57BB4D3D0/'
-  },
-  
-]
+
 
 // Game state
 var gameState = {
   userFighter: '',
-  rivalFighter: ''
-}
+  rivalFighter: '',
+  // Fighter Database
+  fighterDB: [
+    {
+      name: 'thorl',
+      type: 'tank',
+      hp: 60,
+      attack: 52,
+      defense: 43,
+      level: 1,
+      img: 'https://cdnb.artstation.com/p/assets/images/images/004/176/729/original/martin-king-hots-thrall-large.gif?1481063416'
+    },
+    {
+      name: 'talara',
+      type: 'warrior',
+      hp: 55,
+      attack: 48,
+      defense: 49,
+      level: 1,
+      img: 'https://66.media.tumblr.com/3e8f5c83b0644b96e252be8fa5774470/tumblr_od9xizb2bh1qkpz2go1_500.gif'
+    },
+    {
+      name: 'narrii',
+      type: 'archer',
+      hp: 45,
+      attack: 59,
+      defense: 29,
+      level: 1,
+      img: 'https://66.media.tumblr.com/af9c2a796605a377f95baf6b40b115c2/tumblr_o5tx2xwU2J1qkpz2go1_400.gif'
+    },
+    {
+      name: 'vorath',
+      type: 'mage',
+      hp: 50,
+      attack: 45,
+      defense: 34,
+      level: 1,
+      img: 'https://steamuserimages-a.akamaihd.net/ugc/839210690287963320/D1BF1ED29E90DC533B64E8D5602193A57BB4D3D0/'
+    },
+  ],
 
-// Elements
-var fighterEl = document.querySelector('.select-screen').querySelectorAll('.character'); 
-console.log(fighterEl);
-var battleScreenEl =  document.getElementById('battle-screen');
-var attackBtnsEl = document.getElementById('battle-screen').querySelectorAll('.attack'); 
-console.log(attackBtnsEl);
-
-
-
-var i = 0;
-// This is the inital loop
-while (i < fighterEl.length) {
-  // Add function to all characters on screen select
-  fighterEl[i].onclick = function() {
-    // Selected fighter's name
-    var fighterName = this.dataset.fighter;
-    // Image elements
-    var player1Img = document.querySelector('.player1').getElementsByTagName('img');
-    var player2Img = document.querySelector('.player2').getElementsByTagName('img');
-
-    // Save the current fighters
-    gameState.userFighter = fighterName;
-
-    // CPU picks a fightwr
-    cpuPick()
-    // Change to fight screen
-    battleScreenEl.classList.toggle('active');
-
-    // User char Select data from fighter DB
-    gameState.currentChar = fighterDB.filter(function(fighter) {
-      return fighter.name == gameState.userFighter;
-    });
-
-    player1Img[0].src = gameState.currentChar[0].img;
-
-
-    // CPU char Select data from fighter DB
-    gameState.currentRival = fighterDB.filter(function(fighter) {
-      return fighter.name == gameState.rivalFighter;
-    });
-
-    player2Img[0].src = gameState.currentRival[0].img;
-
-    // Current user and cpu fighter starting hp
-    gameState.currentChar[0].health = calcInitHealth(gameState.currentChar);
-    gameState.currentRival[0].health = calcInitHealth(gameState.currentRival);
-    console.log(gameState);
-    
-
-    // User chooses attack
+  elements: {
+    fighterEl: document.querySelector('.select-screen').querySelectorAll('.character'),
+    battleScreenEl:  document.getElementById('battle-screen'),
+    attackBtnsEl: document.getElementById('battle-screen').querySelectorAll('.attack')
+  },
 
 
-    // CPU health decrease
+  init: function() {
+    console.log(gameState.elements.attackBtnsEl);
+
+  var i = 0;
+  // This is the inital loop
+  while (i < gameState.elements.fighterEl.length) {
+    // Add function to all characters on screen select
+    gameState.elements.fighterEl[i].onclick = function() {
+      // Selected fighter's name
+      var fighterName = this.dataset.fighter;
+      // Image elements
+      var player1Img = document.querySelector('.player1').getElementsByTagName('img');
+      var player2Img = document.querySelector('.player2').getElementsByTagName('img');
+
+      // Save the current fighters
+      gameState.userFighter = fighterName;
+
+      // CPU picks a fightwr
+      gameState.cpuPick()
+      // Change to fight screen
+      gameState.elements.battleScreenEl.classList.toggle('active');
+
+      // User char Select data from fighter DB
+      gameState.currentChar = gameState.fighterDB.filter(function(fighter) {
+        return fighter.name == gameState.userFighter;
+      });
+
+      player1Img[0].src = gameState.currentChar[0].img;
 
 
-    // CPU attack
+      // CPU char Select data from fighter DB
+      gameState.currentRival = gameState.fighterDB.filter(function(fighter) {
+        return fighter.name == gameState.rivalFighter;
+      });
 
+      player2Img[0].src = gameState.currentRival[0].img;
 
-    // User health goes down
+      // Current user and cpu fighter starting hp
+      gameState.currentChar[0].health = gameState.calcInitHealth(gameState.currentChar);
 
-    // Rock > Scissors
+      gameState.currentChar[0].originalHealth = gameState.calcInitHealth(gameState.currentChar);
 
-    // Paper > Rock
+      gameState.currentRival[0].health = gameState.calcInitHealth(gameState.currentRival);
+      console.log(gameState);
 
-    // Scissors > Paper
-
-    // Depending on fighter type and defense is the atk strength
-
-    // Health <= 0 is loser
+      gameState.currentRival[0].originalHealth = gameState.calcInitHealth(gameState.currentRival);
+      console.log(gameState);
+      
   }
   i++
 }
 
 var a = 0;
-while (a < attackBtnsEl.length) {
-  attackBtnsEl[a].onclick = function() {
+while (a < gameState.elements.attackBtnsEl.length) {
+  gameState.elements.attackBtnsEl[a].onclick = function() {
     var attackName = this.dataset.attack;
     gameState.currentUserAttack = attackName;
 
-    play(attackName, cpuAttack());
+    gameState.play(attackName, gameState.cpuAttack());
     
   }
   a++
 };
 
-var cpuAttack = function() {
-  var attacks = ['rock', 'paper', 'scissors'];
+  },
 
-  return attacks[randomNumber(0, 3)]
-}
-
-var calcInitHealth =  function(user) {
-  console.log(user[0].level);
+  cpuAttack: function() {
+    var attacks = ['rock', 'paper', 'scissors'];
   
-  return ((0.20 * Math.sqrt(user[0].level)) * user[0].defense) * user[0].hp;
-}
-
-var attackMove = function(attack, level, stack, critical, enemy, attacker) {
-  console.log(enemy.name + ' Before: ' + enemy.health);
-
-  var attackAmount = ((attack * level) * (stack + critical));
-  enemy.health = enemy.health - attackAmount;
-  checkWinner(enemy, attacker)
-  console.log(enemy.name + ' After: ' + enemy.health);
+    return attacks[gameState.randomNumber(0, 3)]
+  },
   
-}
+  calcInitHealth:  function(user) {
+    console.log(user[0].level);
+    return ((0.20 * Math.sqrt(user[0].level)) * user[0].defense) * user[0].hp;
+  },
+  
+  attackMove: function(attack, level, stack, critical, enemy, attacker) {
+    console.log(enemy.name + ' Before: ' + enemy.health);
+  
+    var attackAmount = attack * level * (stack + critical);
+    enemy.health = enemy.health - attackAmount;
 
-var checkWinner = function(enemy, attacker) {
-  if(enemy.health <= 0) {
-    console.log('The winner is ' + attacker.name);
-  }
-}
+    var userHP = document.querySelector('.player1').querySelector('.stats').querySelector('.health').querySelector('.health-bar').querySelector('.inside');
+    var cpuHP = document.querySelector('.player2').querySelector('.stats').querySelector('.health').querySelector('.health-bar').querySelector('.inside');
 
+    // Lower Health bar
+    if (enemy.owner == 'user') {
+     var minusPercent = ((enemy.health * 100) / enemy.originalHealth);
+     userHP.style.width = ((minusPercent < 0) ? 0 : minusPercent) + '%';
+    } else {
+     var minusPercent = ((enemy.health * 100) / enemy.originalHealth);
+     cpuHP.style.width = ((minusPercent < 0) ? 0 : minusPercent) + '%';
+    }
 
-var play = function(userAttack, cpuAttack) {
-  var currentChar = gameState.currentChar[0];
-  var currentRival = gameState.currentRival[0];
+    gameState.checkWinner(enemy, attacker)
+    console.log(enemy.name + ' After: ' + enemy.health);
+  },
+  
+  checkWinner: function(enemy, attacker) {
+    if(enemy.health <= 0) {
+      console.log('The winner is ' + attacker.name);
+    }
+  },
+  
+  randomNumber: function(min, max) {
+    return Math.floor(Math.random() * (min, max)) + min;
+  },
+  
+  cpuPick: function() {
+    // Creates loop to force CPU into choosing another character
+    do {
+      gameState.rivalFighter = gameState.elements.fighterEl[gameState.randomNumber(0, 4)].dataset.fighter;
+      console.log('looping ' + gameState.rivalFighter);
+    }
+    while (gameState.userFighter == gameState.rivalFighter)
+  },
 
-
-  switch(userAttack) {
-    case 'rock':
-      if(cpuAttack == 'paper') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
-          if(currentRival.health >= 1) {
+  play: function(userAttack, cpuAttack) {
+    var currentChar = gameState.currentChar[0];
+    var currentRival = gameState.currentRival[0];
+    // Who is attacking
+    currentChar.owner = 'user';
+    currentRival.owner = 'cpu';
+  
+    switch(userAttack) {
+      case 'rock':
+        if(cpuAttack == 'paper') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+              // CPU
+              gameState.attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+            }
+          }
+        }
+        if(cpuAttack == 'scissors') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
+            if(currentRival.health >= 1) {
             // CPU
-            attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+            }
           }
         }
-      }
-      if(cpuAttack == 'scissors') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+        if(cpuAttack == 'rock') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, 0, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+            // CPU
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, 0, currentChar, currentRival);
+            }
           }
         }
-      }
-      if(cpuAttack == 'rock') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, 0, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, 0, currentChar, currentRival);
+        break;
+      case 'paper':
+        if(cpuAttack == 'paper') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, 1, currentRival, currentChar);
+            // CPU
+            if(currentRival.health >= 1) {
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, 1, currentChar, currentRival);
+            }
           }
         }
-      }
-      break;
-    case 'paper':
-      if(cpuAttack == 'paper') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, 1, currentRival, currentChar);
-          // CPU
-          if(currentRival.health >= 1) {
-          attackMove(currentRival.attack, currentRival.level, .8, 1, currentChar, currentRival);
+        if(cpuAttack == 'scissors') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+            // CPU
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+            }
           }
         }
-      }
-      if(cpuAttack == 'scissors') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+        if(cpuAttack == 'rock') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+            // CPU
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+            }
           }
         }
-      }
-      if(cpuAttack == 'rock') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+        break;
+      case 'scissors':
+        if(cpuAttack == 'paper') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+            // CPU
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+            }
           }
         }
-      }
-      break;
-    case 'scissors':
-      if(cpuAttack == 'paper') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, 2, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, .5, currentChar, currentRival);
+        if(cpuAttack == 'scissors') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, 1, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+            // CPU
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, 1, currentChar, currentRival);
+            }
           }
         }
-      }
-      if(cpuAttack == 'scissors') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, 1, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, 1, currentChar, currentRival);
+        if(cpuAttack == 'rock') {
+          if(currentChar.health >= 1 && currentRival.health >=1) {
+            // User
+            gameState.attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
+            if(currentRival.health >= 1) {
+            // CPU
+            gameState.attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
+            }
           }
         }
-      }
-      if(cpuAttack == 'rock') {
-        if(currentChar.health >= 1 && currentRival.health >=1) {
-          // User
-          attackMove(currentChar.attack, currentChar.level, .8, .5, currentRival, currentChar);
-          if(currentRival.health >= 1) {
-          // CPU
-          attackMove(currentRival.attack, currentRival.level, .8, 2, currentChar, currentRival);
-          }
-        }
-      }
-      break;
+        break;
+    }
   }
 }
 
-var randomNumber = function randomNumber(min, max) {
-  return Math.floor(Math.random() * (min, max)) + min;
-}
-
-var cpuPick = function cpuPick() {
-  gameState.rivalFighter = fighterEl[randomNumber(0, 4)].dataset.fighter;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // pokemon
-// // create data for 3 different pokemons, with their names, type, weaknesses, health, and attack moves(name, attack stat, maximum)
-
-
-
-// var attack = 20;
-// var level = 10;
-// var stack = 1.3;
-// var stamina = 39;
-
-// // create a formula for attacks
-// console.log((attack * level ) * stack / 7)
-
-
-
-// // create a formula for health
-// //HP = 0.20 x Sqrt(Pokemon_level) x (HP_base_stat)
-// console.log(((0.20 * Math.sqrt(level)) * stamina) * 15)
-
-
-
-
-// // let user choose 1 and then assign a random pokemon to battle thats not the users pokemon
-// // p1 vs p2
-
-
-
-
-// // when one user loses all his health declare a winner
+gameState.init();
 
